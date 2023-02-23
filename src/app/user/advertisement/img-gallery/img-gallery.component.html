@@ -1,0 +1,12 @@
+<ng-container *ngFor="let image of images; let index = index">
+  <app-ngx-image-zoom
+    [hidden]="!(activeImg === index)"
+    [thumbImage]="image"
+    [magnification]="magnification"
+  >
+  </app-ngx-image-zoom>
+</ng-container>
+<app-carousel
+  [images]="images"
+  (imgChangeEvent)="activeImgChange($event)"
+></app-carousel>

@@ -1,12 +1,27 @@
+import { Routes, RouterModule } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SearchComponent } from './search.component';
+import { SearchSectionComponent } from './search-section/search-section.component';
+import { SearchResultComponent } from './search-result/search-result.component';
+import { FeaturesModule } from '../feature/feature.module';
+import { SharedModule } from '../shared/shared.module';
 
-
+const routes: Routes = [{ path: '', component: SearchComponent }];
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    SearchComponent,
+    SearchSectionComponent,
+    SearchResultComponent,
+  ],
   imports: [
-    CommonModule
-  ]
+    CommonModule,
+    RouterModule.forChild(routes),
+    MatToolbarModule,
+    FeaturesModule,
+    SharedModule,
+  ],
 })
-export class SearchModule { }
+export class SearchModule {}

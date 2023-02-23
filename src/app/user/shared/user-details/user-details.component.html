@@ -1,0 +1,27 @@
+<div class="row container mt-5 align-items-center">
+  <div class="col-sm-12 col-md-4 d-flex flex-column align-items-center">
+    <img src="assets/pictures/propic.png" alt="profile picture" />
+    <p class="h6">{{ user_details.name }}</p>
+    <button class="mt-2" mat-raised-button color="primary">MESSAGE</button>
+  </div>
+  <div class="d-flex col-sm-12 col-md-6">
+    <ul class="list-unstyled cust-width">
+      <li>User Name</li>
+      <div></div>
+      <li>Phone</li>
+      <div></div>
+      <li>Address</li>
+      <div></div>
+      <li>Email</li>
+    </ul>
+    <ul class="list-unstyled">
+      <li>{{ user_details.name }}</li>
+      <div></div>
+      <li>{{ user_details.phone }}</li>
+      <div></div>
+      <li>{{ user_details.address }}</li>
+      <div></div>
+      <li>{{ user_details.email }}</li>
+    </ul>
+  </div>
+</div>
