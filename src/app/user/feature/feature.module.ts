@@ -8,6 +8,11 @@ import { SearchBarComponent } from './search/search-bar.component';
 import { FilterLocationComponent } from './filter-location/filter-location.component';
 import { BookNowComponent } from './book-now/book-now.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatMenuModule } from '@angular/material/menu';
+import { PostAdModule } from './post-ad/post-ad.module';
+import { PostAdComponent } from './post-ad/post-ad.component';
 
 @NgModule({
   declarations: [
@@ -17,13 +22,21 @@ import { ReactiveFormsModule } from '@angular/forms';
     FilterLocationComponent,
     BookNowComponent,
   ],
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PostAdModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatMenuModule,
+  ],
   exports: [
     SearchBarComponent,
     FilterLocationComponent,
     BookNowComponent,
-    LoginComponent,
-    SignupComponent,
+    PostAdComponent,
   ],
 })
 export class FeaturesModule {}

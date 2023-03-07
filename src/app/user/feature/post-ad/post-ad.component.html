@@ -1,0 +1,20 @@
+<mat-horizontal-stepper>
+  <mat-step [stepControl]="vehicleFormGroup">
+    <ng-template matStepLabel>Vehicle</ng-template>
+    <form [formGroup]="vehicleFormGroup">
+      <app-vehicle></app-vehicle>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="insuranceFormGroup">
+    <ng-template matStepLabel>Insurance</ng-template>
+    <form [formGroup]="insuranceFormGroup">
+      <app-insurance></app-insurance>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="vehicleDetailsFormGroup">
+    <ng-template matStepLabel>Details</ng-template>
+    <form [formGroup]="vehicleDetailsFormGroup">
+      <app-vehicle-details></app-vehicle-details>
+    </form>
+  </mat-step>
+</mat-horizontal-stepper>

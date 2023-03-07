@@ -10,6 +10,8 @@ import { NavBtnPostAdComponent } from './nav-btn-post-ad/nav-btn-post-ad.compone
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatRippleModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,14 @@ import { MatButtonModule } from '@angular/material/button';
     NavBtnProfileComponent,
     NavBtnPostAdComponent,
   ],
-  imports: [CommonModule, MatToolbarModule, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    MatRippleModule,
+    MatDialogModule,
+  ],
   exports: [NavbarComponent],
 })
 export class NavbarModule {}

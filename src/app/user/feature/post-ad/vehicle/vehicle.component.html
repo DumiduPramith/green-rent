@@ -1,0 +1,42 @@
+<div [formGroup]="form">
+  <div class="d-flex flex-column">
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select
+        formControlName="type"
+        (selectionChange)="brandChange($event.value)"
+      >
+        <mat-option *ngFor="let type_ of type" value="{{ type_ }}">{{
+          type_ | titlecase
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Brand</mat-label>
+      <input
+        type="text"
+        matInput
+        formControlName="brand"
+        [matAutocomplete]="auto"
+      />
+
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+        <mat-option
+          *ngFor="let brand_name of filterOptions | async"
+          value="{{ brand_name.brandId }}"
+          >{{ brand_name.brandName | titlecase }}</mat-option
+        >
+      </mat-autocomplete>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Transmission</mat-label>
+      <mat-select formControlName="transmission">
+        <mat-option value="auto">Auto</mat-option>
+        <mat-option value="manual">manual</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div>
+      <button mat-button matStepperNext>Next</button>
+    </div>
+  </div>
+</div>

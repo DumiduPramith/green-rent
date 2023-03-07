@@ -5,7 +5,7 @@ label {
 }
 
 .set-padding {
-  padding: 7rem;
+  padding: 5rem;
 }
 
 .h2 {
@@ -27,9 +27,15 @@ button {
 }
 
 a {
-  color: #9c27b0;
+  color: #9c27b0 !important;
+  cursor: pointer;
+  text-decoration: underline !important;
 }
 
 .set-width {
   max-width: 800px;
+}
+
+input.ng-invalid.ng-touched {
+  border: 1px solid red;
 }

@@ -1,0 +1,36 @@
+<div [formGroup]="insuranceForm">
+  <div class="d-flex flex-column">
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="insuranceType">
+        <mat-option value="full">Full</mat-option>
+        <mat-option value="third">Third Party</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Company</mat-label>
+      <mat-select formControlName="company">
+        <mat-option
+          *ngFor="let company of insuranceComapnies"
+          value="{{ company.companyId }}"
+          >{{ company.name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <section class="mb-3">
+      <mat-checkbox formControlName="collisonCoverage"
+        >Collison Coverage</mat-checkbox
+      >
+      <mat-checkbox formControlName="bodyCoverage">Body Coverage</mat-checkbox>
+      <mat-checkbox formControlName="medicalCoverage"
+        >Medical Coverage</mat-checkbox
+      >
+    </section>
+    <div class="d-flex flex-column">
+      <div>
+        <button mat-button matStepperPrevious>Previous</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </div>
+  </div>
+</div>

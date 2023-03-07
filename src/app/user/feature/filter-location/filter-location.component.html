@@ -1,3 +1,13 @@
-<button mat-fab extended color="#9008A8">
-  <mat-icon>place</mat-icon> All of Sri Lanka
+<button mat-fab extended color="#9008A8" [mat-menu-trigger-for]="menu">
+  <mat-icon>place</mat-icon> {{ search_location }}
 </button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="selectOption('All of Sri Lanka')">
+    All of Sri Lanka
+  </button>
+  <ng-container *ngFor="let district_ of district">
+    <button mat-menu-item (click)="selectOption(district_.value)">
+      {{ district_.viewValue }}
+    </button>
+  </ng-container>
+</mat-menu>

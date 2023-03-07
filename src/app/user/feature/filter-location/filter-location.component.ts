@@ -11,10 +11,16 @@ interface District {
   styleUrls: ['./filter-location.component.scss'],
 })
 export class FilterLocationComponent {
+  search_location = 'All of Sri Lanka';
   district: District[] = [
-    { value: 'Kurunegala', viewValue: 'Kurunegala' },
-    { value: 'Colombo', viewValue: 'Colombo' },
-    { value: 'Jaffna', viewValue: 'Jaffna' },
-    { value: 'Matara', viewValue: 'Matara' },
+    { value: 'kurunegala', viewValue: 'Kurunegala' },
+    { value: 'colombo', viewValue: 'Colombo' },
+    { value: 'jaffna', viewValue: 'Jaffna' },
+    { value: 'matara', viewValue: 'Matara' },
   ];
+
+  selectOption(value: string) {
+    this.search_location = value;
+    console.log(value);
+  }
 }

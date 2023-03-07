@@ -1,4 +1,12 @@
-<div class="d-flex align-items-center" role="button">
+<div
+  class="d-flex align-items-center"
+  role="button"
+  matRipple
+  [matRippleCentered]="centered"
+  [matRippleDisabled]="disabled"
+  [matRippleUnbounded]="unbounded"
+  (click)="openLogin()"
+>
   <mat-icon class="me-2">account_circle</mat-icon>
   Login
 </div>

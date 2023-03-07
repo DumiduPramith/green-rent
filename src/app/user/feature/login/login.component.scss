@@ -1,5 +1,5 @@
 .login-page {
-  padding: 7rem;
+  padding: 5rem;
 }
 
 .h2 {
@@ -25,7 +25,9 @@ button {
 }
 
 a {
-  color: #9c27b0;
+  color: #9c27b0 !important;
+  cursor: pointer;
+  text-decoration: underline !important;
 }
 
 .set-margin {
@@ -34,4 +36,8 @@ a {
 
 .set-margin-small {
   margin-top: 0.2rem;
+}
+
+input.ng-invalid.ng-touched {
+  border: 1px solid red;
 }
