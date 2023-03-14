@@ -3,13 +3,14 @@ import sqlite3
 
 from settings import *
 
+
 class Database:
     def __init__(self):
         try:
             filename = DATABASE_NAME
         except:
             filename = 'test'
-        self.__connection = sqlite3.connect(os.path.join(os.path.dirname(__file__), filename+".db"),
+        self.__connection = sqlite3.connect(os.path.join(os.path.dirname(__file__), filename + ".db"),
                                             check_same_thread=False,
                                             detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
                                             )
@@ -48,3 +49,6 @@ class Database:
         self.run_query(query)
         raw_data = self.__c.fetchall()
         return raw_data
+
+    def get_last_row_id(self):
+        return self.__c.lastrowid
