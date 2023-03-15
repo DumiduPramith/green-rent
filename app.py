@@ -7,7 +7,8 @@ from database.initial_data import InitialData
 from database.mock_data import MockData
 from flask_bcrypt import Bcrypt
 from zipfile import ZipFile
-import os
+import os, io
+from PIL import Image
 
 
 class DatabaseConfig(DatabaseCreate, InitialData, MockData):
@@ -25,6 +26,7 @@ class DatabaseConfig(DatabaseCreate, InitialData, MockData):
 db = DatabaseConfig()
 db.run()
 db.initial_run()
+db.mock_run()
 
 app = Flask(__name__, static_folder='static')
 bcrypt = Bcrypt(app)
@@ -71,6 +73,28 @@ def get_districts():
     return jsonify(data), 200
 
 
+@app.route("/api/get/ad-count")
+def get_ad_count():
+    sql = """
+    SELECT type, COUNT(*) AS count
+    FROM vehicle
+    WHERE type IN ('car', 'bus','lorry','van','bike')
+    GROUP BY type;
+    """
+    raw_data = db.get_data(sql)
+    data = {
+        'car': 0,
+        'bus': 0,
+        'lorry': 0,
+        'van': 0,
+        'bike': 0
+    }
+    for item in raw_data:
+        data[item[0]] = item[1]
+
+    return jsonify(data), 200
+
+
 @app.route("/api/get/user/<int:user_id>")
 def get_user_data(user_id):
     sql = """
@@ -100,10 +124,10 @@ def get_user_ads(user_id):
     WHERE userId = '{user_id}'
     """
     raw_advertisements = db.get_data(sql_advertisement)
-    sql_user = """
+    sql_user = f"""
     SELECT b.username FROM baseUser b 
     JOIN user u ON b.userId = u.userId 
-    WHERE b.userId = '{}' AND u.isUser = 1
+    WHERE b.userId = '{user_id}' AND u.isUser = 1
     """
     try:
         raw_user_data = db.get_data(sql_user)[0]
@@ -116,9 +140,11 @@ def get_user_ads(user_id):
         {
             "username": raw_user_data[0],
             "user_id": user_id,
-            "profile_picture": '/static/profilePictures/propic.png',
+            "profile_picture": 'http://localhost:' + request.environ.get(
+                'SERVER_PORT') + '/static/profilePictures/propic.png',
             "title": row[1],
-            "ad_image": '',
+            "ad_image": 'http://localhost:' + request.environ.get(
+                'SERVER_PORT') + '/'.join(['/static', 'images', str(row[0]), 'image0.jpg']),
             "rate": row[2],
             "duration": row[3],
             "ad_id": row[0]
@@ -215,19 +241,63 @@ def post_ad():
     vehicle_form_content = json.loads(vehicle_form.read())
     insurance_form_content = json.loads(insurance_form.read())
     details_form_content = json.loads(details_form.read())
+    type = vehicle_form_content['type']
+    transmissionMethod = vehicle_form_content['transmission']
+    brandId = vehicle_form_content['brand']
     if (vehicle_form_content['type'] == 'car'):
-        type = vehicle_form_content['type']
-        transmissionMethod = vehicle_form_content['transmission']
         withDriver = details_form_content['driver']
         withAc = details_form_content['ac']
         noOfPassengers = details_form_content['passengers']
-        brandId = vehicle_form_content['brand']
         vehicle_sql = f"""
         INSERT INTO vehicle(type,transmissionMethod,withDriver,withAc,noOfPassengers,brandId) VALUES(
         '{type}','{transmissionMethod}','{withDriver}','{withAc}','{noOfPassengers}','{brandId}'
         )
         """
         db.run_query(vehicle_sql)
+    elif vehicle_form_content['type'] == 'bike':
+        print(details_form_content)
+        engineCapacity = details_form_content['enginecapacity']
+        vehicle_sql = f"""
+                INSERT INTO vehicle(type,transmissionMethod,engineCapacity,brandId) VALUES(
+                '{type}','{transmissionMethod}','{engineCapacity}','{brandId}'
+                )
+                """
+        db.run_query(vehicle_sql)
+    elif vehicle_form_content['type'] == 'lorry':
+        withDriver = details_form_content['driver']
+        maxWeight = details_form_content['weight']
+        vehicle_sql = f"""
+            INSERT INTO vehicle(type,transmissionMethod,withDriver,maxWeight,brandId) VALUES(
+            '{type}','{transmissionMethod}','{withDriver}','{maxWeight}','{brandId}'
+            )
+            """
+        db.run_query(vehicle_sql)
+    elif vehicle_form_content['type'] == 'bus':
+        withDriver = details_form_content['driver']
+        withAc = details_form_content['ac']
+        seats = details_form_content['seats']
+        vehicle_sql = f"""
+            INSERT INTO vehicle(type,transmissionMethod,withDriver,withAc,noOfSeats,brandId) VALUES(
+            '{type}','{transmissionMethod}','{withDriver}','{withAc}','{seats}','{brandId}'
+            )
+            """
+        db.run_query(vehicle_sql)
+    elif vehicle_form_content['type'] == 'van':
+        withDriver = details_form_content['driver']
+        withAc = details_form_content['ac']
+        noOfPassengers = details_form_content['passengers']
+        vehicle_sql = f"""
+            INSERT INTO vehicle(type,transmissionMethod,withDriver,withAc,noOfPassengers,brandId) VALUES(
+            '{type}','{transmissionMethod}','{withDriver}','{withAc}','{noOfPassengers}','{brandId}'
+            )
+            """
+        db.run_query(vehicle_sql)
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Not Valid Vehicle Type"
+        }), 404
+
     vehicleId = db.get_last_row_id()
     title = details_form_content['title']
     rate = details_form_content['rate']
@@ -252,8 +322,23 @@ def post_ad():
     temp_dir = os.path.join(os.getcwd(), 'static', 'images', str(vehicleId))
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
+    # with ZipFile(file, 'r') as zip_ref:
+    #     zip_ref.extractall(temp_dir)
     with ZipFile(file, 'r') as zip_ref:
-        zip_ref.extractall(temp_dir)
+        for name in zip_ref.namelist():
+            if name.endswith('.jpg') or name.endswith('.png'):
+                # Open the image file with Pillow
+                with zip_ref.open(name) as image_file:
+                    image_bytes = io.BytesIO(image_file.read())
+                    image = Image.open(image_bytes)
+
+                    # Resize the image to a default size
+                    default_size = (750, 600)
+                    image.thumbnail(default_size)
+
+                    # Save the resized image to a new file
+                    filename = os.path.join(temp_dir, name)
+                    image.save(filename)
     return jsonify({
         "success": True,
         "message": "Post-ad Success"

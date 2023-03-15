@@ -67,27 +67,6 @@ class DatabaseCreate(Database):
         """
         self.create_table(sql)
 
-    def __create_images(self):
-        sql = """
-        CREATE TABLE IF NOT EXISTS images (
-        imgId INTEGER PRIMARY KEY AUTOINCREMENT,
-        location TEXT NOT NULL
-        )
-        """
-        self.create_table(sql)
-
-    def __create_advertise_image(self):
-        sql = """
-        CREATE TABLE IF NOT EXISTS advertise_image(
-        adId INTEGER,
-        imgId INTEGER,
-        PRIMARY KEY (adId, imgId),
-        FOREIGN KEY (adId) REFERENCES advertisement(adId),
-        FOREIGN KEY (imgId) REFERENCES images(imgId)
-        )
-        """
-        self.create_table(sql)
-
     def __create_advertise_discount(self):
         sql = """
         CREATE TABLE IF NOT EXISTS discount(
@@ -246,8 +225,6 @@ class DatabaseCreate(Database):
         self.__create_maintainer()
         self.__create_user()
         self.__create_advertisement()
-        self.__create_images()
-        self.__create_advertise_image()
         self.__create_advertise_discount()
         self.__create_ad_statics()
         self.__create_review()

@@ -24,18 +24,18 @@ CAR = [
 ]
 
 TRUCK = [
-    {"name": "Benz", "type": "truck"},
-    {"name": "Man", "type": "truck"},
-    {"name": "Volvo", "type": "truck"},
-    {"name": "Hino", "type": "truck"},
-    {"name": "Isuzu", "type": "truck"},
-    {"name": "Dongfeng", "type": "truck"},
-    {"name": "Foton", "type": "truck"},
-    {"name": "Tata", "type": "truck"},
-    {"name": "Ford", "type": "truck"},
-    {"name": "Nissan", "type": "truck"},
-    {"name": "Honda", "type": "truck"},
-    {"name": "Jiangling", "type": "truck"}
+    {"name": "Benz", "type": "lorry"},
+    {"name": "Man", "type": "lorry"},
+    {"name": "Volvo", "type": "lorry"},
+    {"name": "Hino", "type": "lorry"},
+    {"name": "Isuzu", "type": "lorry"},
+    {"name": "Dongfeng", "type": "lorry"},
+    {"name": "Foton", "type": "lorry"},
+    {"name": "Tata", "type": "lorry"},
+    {"name": "Ford", "type": "lorry"},
+    {"name": "Nissan", "type": "lorry"},
+    {"name": "Honda", "type": "lorry"},
+    {"name": "Jiangling", "type": "lorry"}
 ]
 BUS = [
     {"name": "Tata", "type": "bus"},

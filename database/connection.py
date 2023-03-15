@@ -46,8 +46,14 @@ class Database:
         self.__connection.commit()
 
     def get_data(self, query):
-        self.run_query(query)
-        raw_data = self.__c.fetchall()
+        cur = self.__connection.cursor()
+        try:
+            cur.execute(query)
+        except sqlite3.Error as error:
+            print("An error occurred", error)
+            print(query)
+        raw_data = cur.fetchall()
+        cur.close()
         return raw_data
 
     def get_last_row_id(self):
