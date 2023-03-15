@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-user-details',
@@ -6,9 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./user-details.component.scss'],
 })
 export class UserDetailsComponent {
-  user_details = {
-    name: 'Johnatan Smith',
-    phone: '(94)712586478',
+  @Input() userDetails = {
+    username: 'Johnatan Smith',
+    mobile: '(94)712586478',
     address: 'Bay Area, chilaw',
     email: 'example@example.com',
   };

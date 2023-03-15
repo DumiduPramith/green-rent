@@ -86,7 +86,7 @@ export class VehicleDetailsComponent {
         this.detailsForm.get('seats')?.updateValueAndValidity();
         this.detailsForm.get('weight')?.clearValidators();
         this.detailsForm.get('weight')?.updateValueAndValidity();
-      } else if (['truck'].includes(this.VehicleFormGroup.get('type')?.value)) {
+      } else if (['lorry'].includes(this.VehicleFormGroup.get('type')?.value)) {
         this.detailsForm.get('enginecapacity')?.clearValidators();
         this.detailsForm.get('enginecapacity')?.updateValueAndValidity();
         this.detailsForm.get('passengers')?.clearValidators();

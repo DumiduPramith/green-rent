@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import * as JSZip from 'jszip';
 import { Subscription } from 'rxjs';
 import { VehicleFormInterface } from './interfaces/vehicleDetailsForm.interface';
@@ -24,7 +25,8 @@ export class PostAdComponent {
   constructor(
     private _formBuilder: FormBuilder,
     private postAdHttp: PostAdService,
-    private selectionChangeEvent: SelectionChangeEventService
+    private selectionChangeEvent: SelectionChangeEventService,
+    private route: Router
   ) {}
 
   ngOnInit() {}
@@ -55,13 +57,14 @@ export class PostAdComponent {
         duration: raw_data.duration,
         userId: localStorage.getItem('userId'),
       };
+
       if (this.vehicleFormGroup.get('type')?.value === 'car') {
         vehicleDetailsForm.driver = raw_data.driver;
         vehicleDetailsForm.ac = raw_data.ac;
         vehicleDetailsForm.passengers = raw_data.passengers;
       } else if (this.vehicleFormGroup.get('type')?.value === 'bike') {
-        vehicleDetailsForm.capacity = raw_data.capacity;
-      } else if (this.vehicleFormGroup.get('type')?.value === 'truck') {
+        vehicleDetailsForm.enginecapacity = raw_data.enginecapacity;
+      } else if (this.vehicleFormGroup.get('type')?.value === 'lorry') {
         vehicleDetailsForm.driver = raw_data.driver;
         vehicleDetailsForm.weight = raw_data.weight;
       } else if (this.vehicleFormGroup.get('type')?.value === 'bus') {
@@ -98,12 +101,15 @@ export class PostAdComponent {
         next: (response: any) => {
           if (response.success) {
             console.log('Success');
+            this.route.navigate(['/profile', localStorage.getItem('userId')]);
           }
         },
         error: (err) => {
           console.error('Error occurred:', err);
         },
-        complete: () => {},
+        complete: () => {
+          this.postAdHttpSubscription.unsubscribe();
+        },
       });
     } else {
       if (this.vehicleFormGroup.invalid) {

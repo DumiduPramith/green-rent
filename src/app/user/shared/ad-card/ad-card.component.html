@@ -3,16 +3,24 @@
   style="background-color: transparent; cursor: pointer"
 >
   <mat-card-header>
-    <div mat-card-avatar class="example-header-image"></div>
-    <mat-card-title>Shiba Inu</mat-card-title>
-    <mat-card-subtitle style="color: inherit">Dog Breed</mat-card-subtitle>
+    <div
+      mat-card-avatar
+      class="example-header-image"
+      [style.background-image]="'url(' + ad_card_details.profile_picture + ')'"
+    ></div>
+    <mat-card-title>{{ ad_card_details.title }}</mat-card-title>
+    <mat-card-subtitle style="color: inherit">{{
+      ad_card_details.username
+    }}</mat-card-subtitle>
   </mat-card-header>
   <img
     mat-card-image
-    src="https://material.angular.io/assets/img/examples/shiba2.jpg"
+    [src]="ad_card_details.ad_image"
     alt="Photo of a Shiba Inu"
   />
   <mat-card-content class="d-flex justify-content-center">
-    <p class="h5 cust-color pt-3">LKR 6000/DAY</p>
+    <p class="h5 cust-color pt-3">
+      LKR {{ ad_card_details.rate }}/{{ ad_card_details.duration }}
+    </p>
   </mat-card-content>
 </mat-card>

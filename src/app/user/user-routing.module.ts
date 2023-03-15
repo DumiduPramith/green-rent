@@ -2,6 +2,7 @@ import { UserComponent } from './user.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthenticateGuard } from './guards/authenticate.guard';
+import { NotfoundComponent } from './core/components/notfound/notfound.component';
 
 const routes: Routes = [
   {
@@ -37,6 +38,13 @@ const routes: Routes = [
           import('./advertisement/advertisement.module').then(
             (m) => m.AdvertisementModule
           ),
+      },
+      { path: 'notfound', component: NotfoundComponent, title: 'Not Found' },
+      {
+        path: '**',
+        pathMatch: 'full',
+        component: NotfoundComponent,
+        title: 'Not Found',
       },
     ],
   },

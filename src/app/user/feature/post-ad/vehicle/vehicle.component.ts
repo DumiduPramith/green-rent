@@ -48,7 +48,7 @@ export class VehicleComponent {
     );
   }
 
-  type = ['car', 'truck', 'bus', 'van', 'bike'];
+  type = ['car', 'lorry', 'bus', 'van', 'bike'];
   brands: BrandResponse[] = [];
 
   brandChange(value: string) {

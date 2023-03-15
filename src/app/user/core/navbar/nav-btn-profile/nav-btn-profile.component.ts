@@ -13,6 +13,10 @@ export class NavBtnProfileComponent {
     private route: Router
   ) {}
 
+  navigateProfile() {
+    this.route.navigate(['/profile', localStorage.getItem('userId')]);
+  }
+
   logOut() {
     localStorage.clear();
     this.route.navigate(['/']);

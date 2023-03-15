@@ -1,7 +1,7 @@
-<div class="row container mt-5 align-items-center">
+<div class="row mt-5 align-items-center">
   <div class="col-sm-12 col-md-4 d-flex flex-column align-items-center">
     <img src="assets/pictures/propic.png" alt="profile picture" />
-    <p class="h6">{{ user_details.name }}</p>
+    <p class="h6">{{ userDetails.username | titlecase }}</p>
     <button class="mt-2" mat-raised-button color="primary">MESSAGE</button>
   </div>
   <div class="d-flex col-sm-12 col-md-6">
@@ -15,13 +15,13 @@
       <li>Email</li>
     </ul>
     <ul class="list-unstyled">
-      <li>{{ user_details.name }}</li>
+      <li>{{ userDetails.username }}</li>
       <div></div>
-      <li>{{ user_details.phone }}</li>
+      <li>{{ userDetails.mobile }}</li>
       <div></div>
-      <li>{{ user_details.address }}</li>
+      <li>{{ userDetails.address }}</li>
       <div></div>
-      <li>{{ user_details.email }}</li>
+      <li>{{ userDetails.email }}</li>
     </ul>
   </div>
 </div>

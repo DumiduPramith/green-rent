@@ -9,5 +9,5 @@ export interface VehicleFormInterface {
   weight?: number;
   driver?: boolean;
   ac?: boolean;
-  capacity?: number;
+  enginecapacity?: number;
 }

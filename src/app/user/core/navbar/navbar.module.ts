@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatRippleModule,
     MatDialogModule,
     MatMenuModule,
+    RouterModule,
   ],
   exports: [NavbarComponent],
 })

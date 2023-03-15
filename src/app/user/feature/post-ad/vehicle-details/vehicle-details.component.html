@@ -73,7 +73,7 @@
     </mat-form-field>
     <mat-form-field
       appearance="outline"
-      *ngIf="['truck'].includes(VehicleFormGroup.get('type')?.value)"
+      *ngIf="['lorry'].includes(VehicleFormGroup.get('type')?.value)"
     >
       <mat-label>Max Weight</mat-label>
       <input
@@ -91,7 +91,7 @@
       >
       <mat-checkbox
         formControlName="ac"
-        *ngIf="!['truck', 'bike'].includes(VehicleFormGroup.get('type')?.value)"
+        *ngIf="!['lorry', 'bike'].includes(VehicleFormGroup.get('type')?.value)"
         >With AC</mat-checkbox
       >
     </section>
