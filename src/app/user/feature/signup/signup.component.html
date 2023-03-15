@@ -18,7 +18,7 @@
       />
     </div>
     <div class="input-field">
-      <label for="Mobile">Mobile</label>
+      <label for="mobile">Mobile</label>
       <input
         type="text"
         id="mobile"
@@ -46,11 +46,21 @@
         formControlName="email"
         required
       />
+      <mat-error
+        *ngIf="
+          signupForm.get('email')?.invalid &&
+          (signupForm.get('email')?.dirty || signupForm.get('email')?.touched)
+        "
+        >Enter Valid email</mat-error
+      >
+      <mat-error *ngIf="signupForm.controls.email.errors?.['alreadyExists']"
+        >User Already Exist</mat-error
+      >
     </div>
     <div class="input-field">
       <label for="password">Password</label>
       <input
-        type="text"
+        type="password"
         id="password"
         placeholder="Enter 6 character or more"
         formControlName="password"
@@ -60,12 +70,20 @@
     <div class="input-field">
       <label for="re-password">Confirm Password</label>
       <input
-        type="text"
+        type="password"
         id="re-password"
         placeholder="confirm password"
         formControlName="confirm_password"
         required
       />
+      <mat-error
+        *ngIf="
+          signupForm.get('confirm_password')?.invalid &&
+          (signupForm.get('confirm_password')?.dirty ||
+            signupForm.get('confirm_password')?.touched)
+        "
+        >Please make sure passwords match</mat-error
+      >
     </div>
     <button
       mat-raised-button

@@ -8,6 +8,27 @@
       <mat-label>Description</mat-label>
       <textarea matInput formControlName="description"></textarea>
     </mat-form-field>
+    <div class="d-flex">
+      <mat-form-field appearance="outline">
+        <mat-label>Rate</mat-label>
+        <span matPrefix>LKR &nbsp;</span>
+        <input
+          type="number"
+          matInput
+          placeholder="5000"
+          formControlName="rate"
+        />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Duration</mat-label>
+        <mat-select formControlName="duration">
+          <mat-option value="daily">Daily</mat-option>
+          <mat-option value="weekly">Weekly</mat-option>
+          <mat-option value="monthly">Monthly</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
     <mat-form-field appearance="outline">
       <mat-label>Telephone</mat-label>
       <span matPrefix>+94 &nbsp;</span>
@@ -18,21 +39,61 @@
         formControlName="phone"
       />
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field
+      appearance="outline"
+      *ngIf="['bike'].includes(VehicleFormGroup.get('type')?.value)"
+    >
+      <mat-label>Engine Capacity</mat-label>
+      <input
+        type="number"
+        matInput
+        placeholder="1000"
+        formControlName="enginecapacity"
+      />
+      <span matPrefix>CC &nbsp;</span>
+    </mat-form-field>
+    <mat-form-field
+      appearance="outline"
+      *ngIf="['car', 'van'].includes(VehicleFormGroup.get('type')?.value)"
+    >
       <mat-label>passengers</mat-label>
-      <input matInput formControlName="passengers" />
+      <input
+        type="number"
+        matInput
+        formControlName="passengers"
+        placeholder="4"
+      />
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field
+      appearance="outline"
+      *ngIf="['bus'].includes(VehicleFormGroup.get('type')?.value)"
+    >
       <mat-label>Seats</mat-label>
-      <input matInput formControlName="seats" />
+      <input type="number" matInput formControlName="seats" placeholder="10" />
     </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Weight</mat-label>
-      <input matInput formControlName="weight" />
+    <mat-form-field
+      appearance="outline"
+      *ngIf="['truck'].includes(VehicleFormGroup.get('type')?.value)"
+    >
+      <mat-label>Max Weight</mat-label>
+      <input
+        type="number"
+        matInput
+        formControlName="weight"
+        placeholder="1000kg"
+      />
     </mat-form-field>
     <section class="mb-3">
-      <mat-checkbox formControlName="driver">Collison Coverage</mat-checkbox>
-      <mat-checkbox formControlName="ac">Body Coverage</mat-checkbox>
+      <mat-checkbox
+        formControlName="driver"
+        *ngIf="!['bike'].includes(VehicleFormGroup.get('type')?.value)"
+        >With Driver</mat-checkbox
+      >
+      <mat-checkbox
+        formControlName="ac"
+        *ngIf="!['truck', 'bike'].includes(VehicleFormGroup.get('type')?.value)"
+        >With AC</mat-checkbox
+      >
     </section>
     <div class="d-flex flex-column">
       <div>

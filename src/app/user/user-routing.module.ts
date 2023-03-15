@@ -1,6 +1,7 @@
 import { UserComponent } from './user.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthenticateGuard } from './guards/authenticate.guard';
 
 const routes: Routes = [
   {
@@ -16,6 +17,14 @@ const routes: Routes = [
         path: 'results',
         loadChildren: () =>
           import('./search/search.module').then((m) => m.SearchModule),
+      },
+      {
+        path: 'post-ad',
+        loadChildren: () =>
+          import('./feature/post-ad/post-ad.module').then(
+            (m) => m.PostAdModule
+          ),
+        canActivate: [AuthenticateGuard],
       },
       {
         path: 'profile/:id',

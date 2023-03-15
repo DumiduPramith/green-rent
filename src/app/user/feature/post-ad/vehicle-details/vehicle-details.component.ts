@@ -1,5 +1,11 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroupDirective, Validators } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+  Validators,
+} from '@angular/forms';
+import { SelectionChangeEventService } from '../services/selection-change-event.service';
 
 @Component({
   selector: 'app-vehicle-details',
@@ -9,7 +15,12 @@ import { FormControl, FormGroupDirective, Validators } from '@angular/forms';
 export class VehicleDetailsComponent {
   // @ts-ignore
   detailsForm: FormGroup;
-  constructor(private ctrlContainer: FormGroupDirective) {}
+  // @ts-ignore
+  @Input() VehicleFormGroup: FormGroup;
+  constructor(
+    private ctrlContainer: FormGroupDirective,
+    private selectionChangeEvent: SelectionChangeEventService
+  ) {}
 
   ngOnInit() {
     this.detailsForm = this.ctrlContainer.form;
@@ -22,7 +33,19 @@ export class VehicleDetailsComponent {
       new FormControl('', Validators.required)
     );
     this.detailsForm.addControl(
+      'rate',
+      new FormControl('', Validators.required)
+    );
+    this.detailsForm.addControl(
+      'duration',
+      new FormControl('', Validators.required)
+    );
+    this.detailsForm.addControl(
       'phone',
+      new FormControl('', Validators.required)
+    );
+    this.detailsForm.addControl(
+      'enginecapacity',
       new FormControl('', Validators.required)
     );
     this.detailsForm.addControl(
@@ -45,5 +68,48 @@ export class VehicleDetailsComponent {
       'ac',
       new FormControl(false, Validators.required)
     );
+    this.selectionChangeEvent.selectionEvent.subscribe((data) => {
+      if (['bike'].includes(this.VehicleFormGroup.get('type')?.value)) {
+        this.detailsForm.get('passengers')?.clearValidators();
+        this.detailsForm.get('passengers')?.updateValueAndValidity();
+        this.detailsForm.get('seats')?.clearValidators();
+        this.detailsForm.get('seats')?.updateValueAndValidity();
+        this.detailsForm.get('weight')?.clearValidators();
+        this.detailsForm.get('weight')?.updateValueAndValidity();
+        this.detailsForm.get('driver')?.updateValueAndValidity();
+        this.detailsForm.get('ac')?.clearValidators();
+        this.detailsForm.get('ac')?.updateValueAndValidity();
+      } else if (['car'].includes(this.VehicleFormGroup.get('type')?.value)) {
+        this.detailsForm.get('enginecapacity')?.clearValidators();
+        this.detailsForm.get('enginecapacity')?.updateValueAndValidity();
+        this.detailsForm.get('seats')?.clearValidators();
+        this.detailsForm.get('seats')?.updateValueAndValidity();
+        this.detailsForm.get('weight')?.clearValidators();
+        this.detailsForm.get('weight')?.updateValueAndValidity();
+      } else if (['truck'].includes(this.VehicleFormGroup.get('type')?.value)) {
+        this.detailsForm.get('enginecapacity')?.clearValidators();
+        this.detailsForm.get('enginecapacity')?.updateValueAndValidity();
+        this.detailsForm.get('passengers')?.clearValidators();
+        this.detailsForm.get('passengers')?.updateValueAndValidity();
+        this.detailsForm.get('seats')?.clearValidators();
+        this.detailsForm.get('seats')?.updateValueAndValidity();
+        this.detailsForm.get('ac')?.clearValidators();
+        this.detailsForm.get('ac')?.updateValueAndValidity();
+      } else if (['bus'].includes(this.VehicleFormGroup.get('type')?.value)) {
+        this.detailsForm.get('enginecapacity')?.clearValidators();
+        this.detailsForm.get('enginecapacity')?.updateValueAndValidity();
+        this.detailsForm.get('passengers')?.clearValidators();
+        this.detailsForm.get('passengers')?.updateValueAndValidity();
+        this.detailsForm.get('weight')?.clearValidators();
+        this.detailsForm.get('weight')?.updateValueAndValidity();
+      } else if (['van'].includes(this.VehicleFormGroup.get('type')?.value)) {
+        this.detailsForm.get('enginecapacity')?.clearValidators();
+        this.detailsForm.get('enginecapacity')?.updateValueAndValidity();
+        this.detailsForm.get('seats')?.clearValidators();
+        this.detailsForm.get('seats')?.updateValueAndValidity();
+        this.detailsForm.get('weight')?.clearValidators();
+        this.detailsForm.get('weight')?.updateValueAndValidity();
+      }
+    });
   }
 }

@@ -8,7 +8,7 @@
     <div class="input-field">
       <p class="fw-bold set-margin">Email Address</p>
       <input
-        type="text"
+        type="email"
         id="email"
         placeholder="your@example.com"
         formControlName="email"
@@ -21,13 +21,23 @@
         <a>Forgot Password</a>
       </div>
       <input
-        type="text"
+        type="password"
         id="password"
         placeholder="Enter 6 character or more"
         formControlName="password"
         required
       />
     </div>
-    <button mat-raised-button color="primary" type="submit">LOGIN</button>
+    <mat-error *ngIf="loginForm.errors?.['invalidCredential']"
+      >Email or Password Incorrect</mat-error
+    >
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="loginForm.invalid"
+    >
+      LOGIN
+    </button>
   </form>
 </div>

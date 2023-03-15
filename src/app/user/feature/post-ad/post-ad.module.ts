@@ -13,6 +13,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { InsuranceComponent } from './insurance/insurance.component';
 import { VehicleDetailsComponent } from './vehicle-details/vehicle-details.component';
 import { ImagesComponent } from './images/images.component';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [
+  { path: '', component: PostAdComponent, title: 'post ad' },
+];
 
 @NgModule({
   declarations: [
@@ -32,6 +37,7 @@ import { ImagesComponent } from './images/images.component';
     MatButtonModule,
     MatCheckboxModule,
     MatAutocompleteModule,
+    RouterModule.forChild(routes),
   ],
   exports: [PostAdComponent],
 })

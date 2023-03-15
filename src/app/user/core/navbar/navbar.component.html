@@ -4,7 +4,11 @@
       <app-nav-brand></app-nav-brand>
     </div>
     <div class="right d-flex align-items-center">
-      <app-nav-btn-login class="me-4"></app-nav-btn-login>
+      <app-nav-btn-login class="me-4" *ngIf="!isLoggedIn"></app-nav-btn-login>
+      <app-nav-btn-profile
+        class="me-4"
+        *ngIf="isLoggedIn"
+      ></app-nav-btn-profile>
       <app-nav-btn-post-ad></app-nav-btn-post-ad>
     </div>
   </div>

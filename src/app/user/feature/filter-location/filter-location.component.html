@@ -2,9 +2,7 @@
   <mat-icon>place</mat-icon> {{ search_location }}
 </button>
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="selectOption('All of Sri Lanka')">
-    All of Sri Lanka
-  </button>
+  <button mat-menu-item (click)="selectOption(0)">All of Sri Lanka</button>
   <ng-container *ngFor="let district_ of district">
     <button mat-menu-item (click)="selectOption(district_.value)">
       {{ district_.viewValue }}

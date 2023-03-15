@@ -75,9 +75,18 @@ export class VehicleComponent {
     });
   }
 
-  displayFn(brand: BrandResponse) {
-    return brand.brandName;
-  }
+  displayFn = (brandNumber: number) => {
+    for (let item of this.brands) {
+      if (item.brandId === +brandNumber) {
+        return item.brandName;
+      }
+    }
+    return '';
+  };
+  // displayFn(brand_number: number) {
+  //   console.log(this.brands)
+  //   return '';
+  // }
 
   private _filter(name: string): BrandResponse[] {
     const filterValue = name.toLowerCase();
