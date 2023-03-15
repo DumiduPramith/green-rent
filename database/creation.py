@@ -11,7 +11,8 @@ class DatabaseCreate(Database):
         password TEXT NOT NULL,
         address TEXT NOT NULL,
         mobile TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL
+        email TEXT UNIQUE NOT NULL,
+        profilePiture TEXT
         )
         """
         self.create_table(sql)
@@ -59,6 +60,7 @@ class DatabaseCreate(Database):
         description TEXT NOT NULL,
         userId INTEGER,
         vehicleId INTEGER,
+        mainImage TEXT,
         FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE,
         FOREIGN KEY (vehicleId) REFERENCES vehicle(vehicleId)
         )

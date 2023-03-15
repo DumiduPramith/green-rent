@@ -4,14 +4,13 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.creation import DatabaseCreate
 from database.initial_data import InitialData
+from database.mock_data import MockData
 from flask_bcrypt import Bcrypt
 from zipfile import ZipFile
 import os
-from io import BytesIO
-import io
 
 
-class DatabaseConfig(DatabaseCreate, InitialData):
+class DatabaseConfig(DatabaseCreate, InitialData, MockData):
     def delete_all_tables(self):
         sql = """
         SELECT name FROM sqlite_master WHERE type='table'
@@ -27,7 +26,7 @@ db = DatabaseConfig()
 db.run()
 db.initial_run()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 bcrypt = Bcrypt(app)
 app.config['UPLOAD_FOLDER'] = 'static'
 app.config['ALLOWED_EXTENSIONS'] = set(['jpg', 'jpeg', 'png', 'gif'])
@@ -70,6 +69,68 @@ def get_districts():
     raw_data = db.get_data(sql)
     data = [{"value": row[0], "viewValue": row[1]} for row in raw_data]
     return jsonify(data), 200
+
+
+@app.route("/api/get/user/<int:user_id>")
+def get_user_data(user_id):
+    sql = """
+    SELECT b.username, b.address, b.mobile, b.email FROM baseUser b 
+    JOIN user u ON b.userId = u.userId 
+    WHERE b.userId = '{}' AND u.isUser = 1
+    """
+    try:
+        raw_data = db.get_data(sql.format(user_id))[0]
+    except IndexError:
+        return jsonify({
+            "success": False,
+            "message": "User Not Available"
+        }), 404
+    return jsonify({
+        'username': raw_data[0],
+        'address': raw_data[1],
+        'mobile': raw_data[2],
+        'email': raw_data[3]
+    }), 200
+
+
+@app.route("/api/get/ads/<int:user_id>")
+def get_user_ads(user_id):
+    sql_advertisement = f"""
+    SELECT advertiseId,title,rate,rateDuration,mainImage from advertisement 
+    WHERE userId = '{user_id}'
+    """
+    raw_advertisements = db.get_data(sql_advertisement)
+    sql_user = """
+    SELECT b.username FROM baseUser b 
+    JOIN user u ON b.userId = u.userId 
+    WHERE b.userId = '{}' AND u.isUser = 1
+    """
+    try:
+        raw_user_data = db.get_data(sql_user)[0]
+    except IndexError:
+        return jsonify({
+            "success": False,
+            "message": "User Not Available"
+        }), 404
+    data = [
+        {
+            "username": raw_user_data[0],
+            "user_id": user_id,
+            "profile_picture": '/static/profilePictures/propic.png',
+            "title": row[1],
+            "ad_image": '',
+            "rate": row[2],
+            "duration": row[3],
+            "ad_id": row[0]
+        }
+        for row in raw_advertisements
+    ]
+    if data == []:
+        return jsonify({
+            "success": False,
+            "message": "No ads Available"
+        }), 404
+    return jsonify(data)
 
 
 @app.route("/api/register", methods=["POST"])
@@ -174,8 +235,8 @@ def post_ad():
     description = details_form_content['description']
     userId = details_form_content['userId']
     sql = f"""
-    INSERT INTO advertisement(title,rate,rateDuration,description,userId,vehicleId) VALUES(
-    '{title}','{rate}','{duration}','{description}','{userId}','{vehicleId}')    
+    INSERT INTO advertisement(title,rate,rateDuration,description,userId,vehicleId,mainImage) VALUES(
+    '{title}','{rate}','{duration}','{description}','{userId}','{vehicleId}','image0.jpg')    
     """
     db.run_query(sql)
     insuranceType = insurance_form_content['insuranceType']
