@@ -2,13 +2,28 @@ import json
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask.json import JSONEncoder
 from database.creation import DatabaseCreate
 from database.initial_data import InitialData
 from database.mock_data import MockData
 from flask_bcrypt import Bcrypt
 from zipfile import ZipFile
-import os, io
+import os, io, glob
 from PIL import Image
+from datetime import date
+
+
+class CustomJSONEncoder(JSONEncoder):
+    def default(self, obj):
+        try:
+            if isinstance(obj, date):
+                return obj.isoformat()
+            iterable = iter(obj)
+        except TypeError:
+            pass
+        else:
+            return list(iterable)
+        return JSONEncoder.default(self, obj)
 
 
 class DatabaseConfig(DatabaseCreate, InitialData, MockData):
@@ -30,7 +45,9 @@ db.mock_run()
 
 app = Flask(__name__, static_folder='static')
 bcrypt = Bcrypt(app)
+app.json_encoder = CustomJSONEncoder
 app.config['UPLOAD_FOLDER'] = 'static'
+app.config['AD_IMAGES'] = 'static/images'
 app.config['ALLOWED_EXTENSIONS'] = set(['jpg', 'jpeg', 'png', 'gif'])
 CORS(app)
 
@@ -120,7 +137,7 @@ def get_user_data(user_id):
 @app.route("/api/get/ads/<int:user_id>")
 def get_user_ads(user_id):
     sql_advertisement = f"""
-    SELECT advertiseId,title,rate,rateDuration,mainImage from advertisement 
+    SELECT advertiseId,title,rate,rateDuration,mainImage,userId from advertisement 
     WHERE userId = '{user_id}'
     """
     raw_advertisements = db.get_data(sql_advertisement)
@@ -244,6 +261,8 @@ def post_ad():
     type = vehicle_form_content['type']
     transmissionMethod = vehicle_form_content['transmission']
     brandId = vehicle_form_content['brand']
+    phone = details_form_content['phone']
+    district = details_form_content['district']
     if (vehicle_form_content['type'] == 'car'):
         withDriver = details_form_content['driver']
         withAc = details_form_content['ac']
@@ -305,8 +324,8 @@ def post_ad():
     description = details_form_content['description']
     userId = details_form_content['userId']
     sql = f"""
-    INSERT INTO advertisement(title,rate,rateDuration,description,userId,vehicleId,mainImage) VALUES(
-    '{title}','{rate}','{duration}','{description}','{userId}','{vehicleId}','image0.jpg')    
+    INSERT INTO advertisement(title,rate,rateDuration,description,userId,vehicleId,mainImage,phone,district) VALUES(
+    '{title}','{rate}','{duration}','{description}','{userId}','{vehicleId}','image0.jpg','{phone}','{district}')    
     """
     db.run_query(sql)
     insuranceType = insurance_form_content['insuranceType']
@@ -319,7 +338,7 @@ def post_ad():
     )
     """
     db.run_query(insurance_sql)
-    temp_dir = os.path.join(os.getcwd(), 'static', 'images', str(vehicleId))
+    temp_dir = os.path.join(os.getcwd(), app.config['AD_IMAGES'], str(vehicleId))
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
     # with ZipFile(file, 'r') as zip_ref:
@@ -343,6 +362,96 @@ def post_ad():
         "success": True,
         "message": "Post-ad Success"
     }), 200
+
+
+@app.route('/api/get/ad-details/<int:ad_id>')
+def get_adverisement_details(ad_id):
+    sql = f"""
+    SELECT ad.status,ad.title,ad.rate,ad.rateDuration,ad.createdAt,ad.description,ad.userId,ad.vehicleId,ad.phone, districts.district 
+    FROM advertisement ad
+    JOIN districts ON ad.district = districts.districtId  
+    WHERE ad.advertiseId='{ad_id}'
+    """
+    try:
+        raw_data = db.get_data(sql)[0]
+    except IndexError:
+        return jsonify({
+            "success": False,
+            "message": "Advertisement not available"
+        }), 404
+    if raw_data[0] != 1:
+        return jsonify({
+            "success": False,
+            "message": "Advertise Inactive"
+        }), 404
+    dir_path = os.path.join(os.getcwd(), app.config['AD_IMAGES'], str(ad_id))
+    if os.path.exists(dir_path):
+        # Get a list of all image files in the directory
+        image_files = glob.glob(os.path.join(dir_path, '*.jpg')) + glob.glob(
+            os.path.join(dir_path, '*.jpeg')) + glob.glob(os.path.join(dir_path, '*.png'))
+
+        image_files = ['/'.join([''.join(['http://localhost:', request.environ.get(
+            'SERVER_PORT')]), app.config['AD_IMAGES'], str(ad_id), os.path.basename(file)]) for file in image_files]
+
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Advertise Images Path Not available"
+        }), 404
+
+    data = {
+        "adId": ad_id,
+        "title": raw_data[1],
+        "rate": raw_data[2],
+        "rateDuration": raw_data[3],
+        "createdAt": raw_data[4],
+        "description": raw_data[5],
+        "userId": raw_data[6],
+        "vehicleId": raw_data[7],
+        "phone": raw_data[8],
+        "district": raw_data[9],
+        "images": image_files
+    }
+    return jsonify(data)
+
+
+@app.route('/api/get/search')
+def get_search_results():
+    query = request.args.get('search')
+    search_sql = f"""
+    SELECT advertiseId,title,rate,rateDuration,mainImage,userId from advertisement 
+    WHERE title LIKE '%{query}%'
+    OR description LIKE '%{query}%'
+    ORDER BY createdAt DESC;
+    """
+    raw_advertisements = db.get_data(search_sql)
+    sql_user = """
+        SELECT b.username FROM baseUser b 
+        JOIN user u ON b.userId = u.userId 
+        WHERE b.userId = '{}' AND u.isUser = 1
+        """
+    data = []
+    for row in raw_advertisements:
+        userId = row[5]
+        try:
+            raw_user_data = db.get_data(sql_user.format(userId))[0]
+        except IndexError:
+            continue
+        ad_data = {
+            "username": raw_user_data[0],
+            "user_id": userId,
+            "profile_picture": 'http://localhost:' + request.environ.get(
+                'SERVER_PORT') + '/static/profilePictures/propic.png',
+            "title": row[1],
+            "ad_image": 'http://localhost:' + request.environ.get(
+                'SERVER_PORT') + '/'.join(['/static', 'images', str(row[0]), 'image0.jpg']),
+            "rate": row[2],
+            "duration": row[3],
+            "ad_id": row[0]
+        }
+        data.append(ad_data)
+    print(data)
+    return jsonify(data), 200
 
 
 if __name__ == '__main__':

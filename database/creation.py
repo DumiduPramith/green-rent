@@ -58,11 +58,14 @@ class DatabaseCreate(Database):
         rateDuration INTEGER NOT NULL,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
         description TEXT NOT NULL,
+        phone INTEGER NOT NULL,
+        district INTEGER NOT NULL,
         userId INTEGER,
         vehicleId INTEGER,
         mainImage TEXT,
         FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE,
-        FOREIGN KEY (vehicleId) REFERENCES vehicle(vehicleId)
+        FOREIGN KEY (vehicleId) REFERENCES vehicle(vehicleId),
+        FOREIGN KEY (district) REFERENCES districts(districtId)
         )
         """
         self.create_table(sql)
