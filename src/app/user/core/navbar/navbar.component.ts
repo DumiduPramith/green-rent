@@ -22,6 +22,8 @@ export class NavbarComponent {
   }
 
   ngOnDestroy() {
-    this.loginCheckServiceSubscription.unsubscribe();
+    if (this.loginCheckServiceSubscription) {
+      this.loginCheckServiceSubscription.unsubscribe();
+    }
   }
 }

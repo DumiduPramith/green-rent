@@ -68,14 +68,18 @@ export class SignupComponent {
             this.signupForm.controls.email.setErrors({ alreadyExists: true });
           }
         },
-        complete: () => {
-          this.regiseterSubscription.unsubscribe();
-        },
+        complete: () => {},
       });
   }
 
   openLogin() {
     this.dialog.open(LoginComponent);
     this.onNoClick();
+  }
+
+  ngOnDestroy() {
+    if (this.regiseterSubscription) {
+      this.regiseterSubscription.unsubscribe();
+    }
   }
 }

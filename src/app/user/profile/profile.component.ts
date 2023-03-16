@@ -48,9 +48,7 @@ export class ProfileComponent {
         error: (err) => {
           this.route.navigate(['notfound']);
         },
-        complete: () => {
-          this.profileHttpSubscription.unsubscribe();
-        },
+        complete: () => {},
       });
 
     this.userAdsHttpSubscription = this.fetchUserAds
@@ -60,9 +58,17 @@ export class ProfileComponent {
           this.adlist = response;
         },
         error: (err) => {},
-        complete: () => {
-          this.userAdsHttpSubscription.unsubscribe();
-        },
+        complete: () => {},
       });
+  }
+
+  ngOnDestroy() {
+    if (this.profileHttpSubscription) {
+      this.profileHttpSubscription.unsubscribe();
+    }
+
+    if (this.userAdsHttpSubscription) {
+      this.userAdsHttpSubscription.unsubscribe();
+    }
   }
 }

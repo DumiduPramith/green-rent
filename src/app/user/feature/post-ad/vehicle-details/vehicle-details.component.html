@@ -1,6 +1,16 @@
 <div [formGroup]="detailsForm">
   <div class="d-flex flex-column">
     <mat-form-field appearance="outline">
+      <mat-label>District</mat-label>
+      <mat-select formControlName="district">
+        <mat-option
+          *ngFor="let district of districts | async"
+          value="{{ district.value }}"
+          >{{ district.viewValue | titlecase }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
       <mat-label>Title</mat-label>
       <input matInput formControlName="title" />
     </mat-form-field>

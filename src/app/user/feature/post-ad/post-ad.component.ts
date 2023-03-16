@@ -55,6 +55,7 @@ export class PostAdComponent {
         phone: raw_data.phone,
         rate: raw_data.rate,
         duration: raw_data.duration,
+        district: raw_data.district,
         userId: localStorage.getItem('userId'),
       };
 
@@ -107,9 +108,7 @@ export class PostAdComponent {
         error: (err) => {
           console.error('Error occurred:', err);
         },
-        complete: () => {
-          this.postAdHttpSubscription.unsubscribe();
-        },
+        complete: () => {},
       });
     } else {
       if (this.vehicleFormGroup.invalid) {
@@ -141,5 +140,11 @@ export class PostAdComponent {
 
   onStepChange(event: any) {
     this.selectionChangeEvent.selectionChangeEventEmit();
+  }
+
+  ngOnDestroy() {
+    if (this.postAdHttpSubscription) {
+      this.postAdHttpSubscription.unsubscribe();
+    }
   }
 }

@@ -1,13 +1,8 @@
-<div class="mt-5">
-  <div class="d-flex justify-content-center">
-    <p class="h1 fw-bold">ADS</p>
-  </div>
-  <div
-    class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-4 mt-5"
-    id="search-result"
-  >
-    <div class="col" *ngFor="let item of adList">
-      <app-ad-card [ad_card_details]="item"></app-ad-card>
-    </div>
+<div
+  class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-4 mt-5"
+  id="search-result"
+>
+  <div class="col" *ngFor="let item of adList">
+    <app-ad-card [ad_card_details]="item"></app-ad-card>
   </div>
 </div>

@@ -49,9 +49,13 @@ export class CategorySectionComponent {
         }
       },
       error: (err) => {},
-      complete: () => {
-        this.fetchCountSubscription.unsubscribe();
-      },
+      complete: () => {},
     });
+  }
+
+  ngOnDestroy() {
+    if (this.fetchCountSubscription) {
+      this.fetchCountSubscription.unsubscribe();
+    }
   }
 }

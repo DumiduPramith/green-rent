@@ -1,8 +1,12 @@
 <form>
   <input
+    [(ngModel)]="search"
     class="searchInput"
     type="text"
+    name="search"
     placeholder="What are you looking for?"
   />
-  <button class="searchButton"><mat-icon>search</mat-icon></button>
+  <button class="searchButton" (click)="onSearch()">
+    <mat-icon>search</mat-icon>
+  </button>
 </form>

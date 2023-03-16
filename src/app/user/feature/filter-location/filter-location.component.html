@@ -1,4 +1,10 @@
-<button mat-fab extended color="#9008A8" [mat-menu-trigger-for]="menu">
+<button
+  mat-fab
+  extended
+  color="#9008A8"
+  [mat-menu-trigger-for]="menu"
+  #trigger="matMenuTrigger"
+>
   <mat-icon>place</mat-icon> {{ search_location }}
 </button>
 <mat-menu #menu="matMenu">

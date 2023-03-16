@@ -1,3 +1,4 @@
+import { GetDistrictsService } from './../../services/get-districts.service';
 import { Component, Input } from '@angular/core';
 import {
   FormControl,
@@ -17,13 +18,21 @@ export class VehicleDetailsComponent {
   detailsForm: FormGroup;
   // @ts-ignore
   @Input() VehicleFormGroup: FormGroup;
+  districts: any;
   constructor(
     private ctrlContainer: FormGroupDirective,
-    private selectionChangeEvent: SelectionChangeEventService
-  ) {}
+    private selectionChangeEvent: SelectionChangeEventService,
+    private fetchDistricts: GetDistrictsService
+  ) {
+    this.districts = this.fetchDistricts.getDistricts();
+  }
 
   ngOnInit() {
     this.detailsForm = this.ctrlContainer.form;
+    this.detailsForm.addControl(
+      'district',
+      new FormControl('', Validators.required)
+    );
     this.detailsForm.addControl(
       'title',
       new FormControl('', Validators.required)

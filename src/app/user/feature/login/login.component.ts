@@ -51,9 +51,7 @@ export class LoginComponent {
         }
         console.log('error occured ', err);
       },
-      complete: () => {
-        this.loginHttpSubscription.unsubscribe();
-      },
+      complete: () => {},
     });
   }
 
@@ -64,5 +62,11 @@ export class LoginComponent {
 
   onClose() {
     this.dialogRef.close();
+  }
+
+  ngOnDestroy() {
+    if (this.loginHttpSubscription) {
+      this.loginHttpSubscription.unsubscribe();
+    }
   }
 }

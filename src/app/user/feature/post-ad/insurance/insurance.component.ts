@@ -50,13 +50,16 @@ export class InsuranceComponent {
         console.log('Response received: ', response);
       },
       error: (err) => {
-        this.insuranceSubscription.unsubscribe();
         console.log('Error occured: ', err);
       },
       complete: () => {
-        this.insuranceSubscription.unsubscribe();
         console.log('Complete');
       },
     });
+  }
+  ngOnDestroy() {
+    if (this.insuranceSubscription) {
+      this.insuranceSubscription.unsubscribe();
+    }
   }
 }

@@ -4,6 +4,7 @@ export interface VehicleFormInterface {
   phone: number;
   rate: number;
   duration: string;
+  district: number;
   passengers?: number;
   seats?: number;
   weight?: number;

@@ -7,7 +7,7 @@ import { SignupComponent } from './signup/signup.component';
 import { SearchBarComponent } from './search/search-bar.component';
 import { FilterLocationComponent } from './filter-location/filter-location.component';
 import { BookNowComponent } from './book-now/book-now.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
@@ -28,6 +28,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatDialogModule,
     MatFormFieldModule,
     MatMenuModule,
+    FormsModule,
   ],
   exports: [SearchBarComponent, FilterLocationComponent, BookNowComponent],
 })

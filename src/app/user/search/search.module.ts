@@ -4,18 +4,14 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchComponent } from './search.component';
 import { SearchSectionComponent } from './search-section/search-section.component';
-import { SearchResultComponent } from './search-result/search-result.component';
+
 import { FeaturesModule } from '../feature/feature.module';
 import { SharedModule } from '../shared/shared.module';
 
 const routes: Routes = [{ path: '', component: SearchComponent }];
 
 @NgModule({
-  declarations: [
-    SearchComponent,
-    SearchSectionComponent,
-    SearchResultComponent,
-  ],
+  declarations: [SearchComponent, SearchSectionComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),

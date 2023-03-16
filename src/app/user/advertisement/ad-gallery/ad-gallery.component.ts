@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-ad-gallery',
@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./ad-gallery.component.scss'],
 })
 export class AdGalleryComponent {
-  images = [
+  @Input() images = [
     'assets/car/car1.jpeg',
     'assets/car/car2.jpeg',
     'assets/car/car3.jpeg',

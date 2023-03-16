@@ -65,14 +65,13 @@ export class VehicleComponent {
         console.log('Response received: ', response);
       },
       error: (err) => {
-        this.brandSubscription.unsubscribe();
         console.log('Error occured: ', err);
       },
       complete: () => {
-        this.brandSubscription.unsubscribe();
         console.log('Complete');
       },
     });
+    this.form.get('brand')?.setValue('');
   }
 
   displayFn = (brandNumber: number) => {
@@ -93,5 +92,11 @@ export class VehicleComponent {
     return this.brands.filter((option) =>
       option.brandName.toLowerCase().includes(filterValue)
     );
+  }
+
+  ngOnDestroy() {
+    if (this.brandSubscription) {
+      this.brandSubscription.unsubscribe();
+    }
   }
 }
