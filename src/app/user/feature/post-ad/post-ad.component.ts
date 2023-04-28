@@ -31,6 +31,9 @@ export class PostAdComponent {
 
   ngOnInit() {}
 
+  isEditable = false;
+  isLinear = true;
+
   async PostAd() {
     if (
       this.vehicleFormGroup.valid &&

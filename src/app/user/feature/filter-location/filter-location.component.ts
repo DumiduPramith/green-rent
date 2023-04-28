@@ -26,7 +26,7 @@ export class FilterLocationComponent {
 
   ngOnInit() {
     this.activatedRoute.queryParamMap.subscribe((query) => {
-      const district = query.get('location');
+      const district = query.get('district');
       if (district) {
         this.search_location = district;
       }

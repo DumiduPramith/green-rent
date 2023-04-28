@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChange } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { AdDetailsInterface } from '../interfaces/adHttp.interface';
 
 @Component({
@@ -19,4 +20,13 @@ export class AdDetailsComponent {
     phone: 0,
     district: '',
   };
+  // @ts-ignore
+  multilineText;
+  constructor(private sanitizer: DomSanitizer) {}
+
+  ngOnChanges(change: SimpleChange) {
+    this.multilineText = this.sanitizer.bypassSecurityTrustHtml(
+      this.adDetails.description.replace(/\n/g, '<br>')
+    );
+  }
 }

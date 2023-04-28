@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { InsuranceComponent } from './insurance/insurance.component';
 import { VehicleDetailsComponent } from './vehicle-details/vehicle-details.component';
 import { ImagesComponent } from './images/images.component';
@@ -37,6 +38,7 @@ const routes: Routes = [
     MatButtonModule,
     MatCheckboxModule,
     MatAutocompleteModule,
+    DragDropModule,
     RouterModule.forChild(routes),
   ],
   exports: [PostAdComponent],

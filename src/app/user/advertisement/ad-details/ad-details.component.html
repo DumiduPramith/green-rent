@@ -6,9 +6,7 @@
     ><app-ad-date-time [date]="adDetails.createdAt"></app-ad-date-time>
   </p>
 
-  <p class="mb-4 mt-3">
-    {{ adDetails.title }}
-  </p>
+  <p class="mb-4 mt-3" [innerHTML]="multilineText"></p>
 
   <app-ad-price
     [rate]="adDetails.rate"

@@ -7,4 +7,21 @@
     (change)="onFileSelected($event)"
     required
   />
+  <div class="mt-3 d-flex flex-wrap" cdkDropListGroup>
+    <div
+      cdkDropList
+      *ngFor="let img of images; let i = index"
+      [cdkDropListData]="i"
+    >
+      <img
+        cdkDrag
+        [cdkDragData]="i"
+        (cdkDragEntered)="dragEntered($event)"
+        [src]="img.url"
+        height="150"
+        width="200px"
+        style="margin: 3px"
+      />
+    </div>
+  </div>
 </div>

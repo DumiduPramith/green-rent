@@ -43,7 +43,7 @@ export class SearchBarComponent {
       this.route.navigate(['/results'], {
         queryParams: {
           search_query: this.search,
-          location: this.selected_district,
+          district: this.selected_district,
         },
       });
     }

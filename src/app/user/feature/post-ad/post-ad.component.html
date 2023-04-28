@@ -2,20 +2,23 @@
   <div class="d-flex justify-content-center mb-5">
     <p class="h2">Welcome {{ name | titlecase }}! Let's post an ad.</p>
   </div>
-  <mat-horizontal-stepper (selectionChange)="onStepChange($event)">
-    <mat-step [stepControl]="vehicleFormGroup">
+  <mat-horizontal-stepper
+    (selectionChange)="onStepChange($event)"
+    [linear]="isLinear"
+  >
+    <mat-step [stepControl]="vehicleFormGroup" [editable]="isEditable">
       <ng-template matStepLabel>Vehicle</ng-template>
       <form [formGroup]="vehicleFormGroup">
         <app-vehicle></app-vehicle>
       </form>
     </mat-step>
-    <mat-step [stepControl]="insuranceFormGroup">
+    <mat-step [stepControl]="insuranceFormGroup" [editable]="isEditable">
       <ng-template matStepLabel>Insurance</ng-template>
       <form [formGroup]="insuranceFormGroup">
         <app-insurance></app-insurance>
       </form>
     </mat-step>
-    <mat-step [stepControl]="vehicleDetailsFormGroup">
+    <mat-step [stepControl]="vehicleDetailsFormGroup" [editable]="isEditable">
       <ng-template matStepLabel>Details</ng-template>
       <form [formGroup]="vehicleDetailsFormGroup">
         <app-vehicle-details
@@ -23,7 +26,7 @@
         ></app-vehicle-details>
       </form>
     </mat-step>
-    <mat-step [stepControl]="imagesFormGroup">
+    <mat-step [stepControl]="imagesFormGroup" [editable]="isEditable">
       <ng-template matStepLabel>Images</ng-template>
       <form [formGroup]="imagesFormGroup">
         <app-images></app-images>

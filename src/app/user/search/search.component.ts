@@ -17,18 +17,18 @@ export class SearchComponent {
   adList: AdvertisementCardInterface[] = [];
 
   constructor(
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private fetchSearchResults: FetchSearchResultService
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe((params) => {
+    this.activatedRoute.queryParamMap.subscribe((params) => {
       const q = params.get('search_query');
       const district = params.get('district');
       if (q && district) {
         this.query$ = q;
         this.searchSubscription = this.fetchSearchResults
-          .fetchSearchResults(this.query$)
+          .fetchSearchResults(this.query$, district)
           .subscribe({
             next: (data) => {
               this.adList = data;
