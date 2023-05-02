@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginChangerService } from '../../services/login-changer.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-nav-btn-profile',
@@ -10,7 +11,8 @@ import { LoginChangerService } from '../../services/login-changer.service';
 export class NavBtnProfileComponent {
   constructor(
     private logOutEventEmitter: LoginChangerService,
-    private route: Router
+    private route: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   navigateProfile() {
@@ -21,5 +23,13 @@ export class NavBtnProfileComponent {
     localStorage.clear();
     this.route.navigate(['/']);
     this.logOutEventEmitter.sendEvent();
+    this.openSnackBar('Log Out Sucess');
+  }
+
+  openSnackBar(msg: string, cls = 'snackbar') {
+    this.snackBar.open(msg, 'Close', {
+      duration: 5000,
+      panelClass: [cls],
+    });
   }
 }

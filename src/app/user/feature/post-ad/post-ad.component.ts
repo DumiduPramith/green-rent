@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { VehicleFormInterface } from './interfaces/vehicleDetailsForm.interface';
 import { PostAdService } from './services/post-ad.service';
 import { SelectionChangeEventService } from './services/selection-change-event.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-post-ad',
@@ -26,7 +27,8 @@ export class PostAdComponent {
     private _formBuilder: FormBuilder,
     private postAdHttp: PostAdService,
     private selectionChangeEvent: SelectionChangeEventService,
-    private route: Router
+    private route: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {}
@@ -105,6 +107,7 @@ export class PostAdComponent {
         next: (response: any) => {
           if (response.success) {
             console.log('Success');
+            this.openSnackBar('Post Ad Success');
             this.route.navigate(['/profile', localStorage.getItem('userId')]);
           }
         },
@@ -149,5 +152,12 @@ export class PostAdComponent {
     if (this.postAdHttpSubscription) {
       this.postAdHttpSubscription.unsubscribe();
     }
+  }
+
+  openSnackBar(msg: string, cls = 'snackbar') {
+    this.snackBar.open(msg, 'Close', {
+      duration: 5000,
+      panelClass: [cls],
+    });
   }
 }

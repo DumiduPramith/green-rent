@@ -6,6 +6,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LoginComponent } from '../login/login.component';
 import { RegisterService } from '../services/register.service';
 import Validation from '../utils/validation';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-signup',
@@ -36,7 +37,8 @@ export class SignupComponent {
   constructor(
     public dialogRef: MatDialogRef<SignupComponent>,
     private dialog: MatDialog,
-    private registerService: RegisterService
+    private registerService: RegisterService,
+    private snackBar: MatSnackBar
   ) {}
 
   onNoClick() {
@@ -59,6 +61,7 @@ export class SignupComponent {
         next: (response: any) => {
           if (response.success) {
             console.log('registration success');
+            this.openSnackBar('Registration Success');
             this.onNoClick();
           }
         },
@@ -81,5 +84,12 @@ export class SignupComponent {
     if (this.regiseterSubscription) {
       this.regiseterSubscription.unsubscribe();
     }
+  }
+
+  openSnackBar(msg: string, cls = 'snackbar') {
+    this.snackBar.open(msg, 'Close', {
+      duration: 5000,
+      panelClass: [cls],
+    });
   }
 }

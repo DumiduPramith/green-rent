@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatDialogModule,
     MatFormFieldModule,
     MatMenuModule,
+    MatSnackBarModule,
     FormsModule,
   ],
   exports: [SearchBarComponent, FilterLocationComponent, BookNowComponent],

@@ -1,11 +1,12 @@
 import { LoginInterface } from './../interfaces/login.interface';
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SignupComponent } from '../signup/signup.component';
 import { LoginService } from '../services/login.service';
 import { Subscription } from 'rxjs';
 import { LoginChangerService } from '../../core/services/login-changer.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,8 @@ export class LoginComponent {
     public dialogRef: MatDialogRef<LoginComponent>,
     private dialog: MatDialog,
     private loginHttp: LoginService,
-    private loginEventEmitter: LoginChangerService
+    private loginEventEmitter: LoginChangerService,
+    private snackBar: MatSnackBar
   ) {}
 
   onSubmit() {
@@ -42,6 +44,7 @@ export class LoginComponent {
           localStorage.setItem('userId', response.user.userId);
           localStorage.setItem('username', response.user.userName);
           this.loginEventEmitter.sendEvent();
+          this.openSnackBar('Login Success');
           this.onClose();
         }
       },
@@ -68,5 +71,12 @@ export class LoginComponent {
     if (this.loginHttpSubscription) {
       this.loginHttpSubscription.unsubscribe();
     }
+  }
+
+  openSnackBar(msg: string, cls = 'snackbar') {
+    this.snackBar.open(msg, 'Close', {
+      duration: 5000,
+      panelClass: [cls],
+    });
   }
 }
