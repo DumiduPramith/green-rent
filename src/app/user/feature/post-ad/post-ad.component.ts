@@ -31,8 +31,8 @@ export class PostAdComponent {
 
   ngOnInit() {}
 
-  isEditable = false;
-  isLinear = true;
+  isEditable = true;
+  isLinear = false;
 
   async PostAd() {
     if (
