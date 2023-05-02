@@ -58,3 +58,12 @@ class Database:
 
     def get_last_row_id(self):
         return self.__c.lastrowid
+
+    def execute(self, query):
+        self.__c.execute(query)
+
+    def commit(self):
+        self.__connection.commit()
+
+    def rollback(self):
+        self.__connection.rollback()

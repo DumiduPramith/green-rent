@@ -53,19 +53,19 @@ class DatabaseCreate(Database):
         CREATE TABLE IF NOT EXISTS advertisement(
         advertiseId INTEGER PRIMARY KEY AUTOINCREMENT,
         status INTEGER Default 1,
-        title TEXT NOT NULL ,
+        title TEXT NOT NULL UNIQUE,
         rate INTEGER NOT NULL ,
         rateDuration INTEGER NOT NULL,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
         description TEXT NOT NULL,
         phone INTEGER NOT NULL,
-        district INTEGER NOT NULL,
+        districtId INTEGER NOT NULL,
         userId INTEGER,
         vehicleId INTEGER,
         mainImage TEXT,
         FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE,
         FOREIGN KEY (vehicleId) REFERENCES vehicle(vehicleId),
-        FOREIGN KEY (district) REFERENCES districts(districtId)
+        FOREIGN KEY (districtId) REFERENCES districts(districtId)
         )
         """
         self.create_table(sql)

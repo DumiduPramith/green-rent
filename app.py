@@ -11,6 +11,7 @@ from zipfile import ZipFile
 import os, io, glob
 from PIL import Image
 from datetime import date
+from logger import set_logger
 
 
 class CustomJSONEncoder(JSONEncoder):
@@ -38,6 +39,7 @@ class DatabaseConfig(DatabaseCreate, InitialData, MockData):
             self.run_query(q)
 
 
+logger = set_logger(__name__)
 db = DatabaseConfig()
 db.run()
 db.initial_run()
@@ -122,10 +124,13 @@ def get_user_data(user_id):
     try:
         raw_data = db.get_data(sql.format(user_id))[0]
     except IndexError:
+        logger.info('User Not Available')
+        logger.debug(' '.join(['sql query:-', sql]))
         return jsonify({
             "success": False,
             "message": "User Not Available"
         }), 404
+    logger.info('Response send. code: 200')
     return jsonify({
         'username': raw_data[0],
         'address': raw_data[1],
@@ -149,6 +154,7 @@ def get_user_ads(user_id):
     try:
         raw_user_data = db.get_data(sql_user)[0]
     except IndexError:
+        logger.debug(' '.join(['User not found']))
         return jsonify({
             "success": False,
             "message": "User Not Available"
@@ -169,10 +175,12 @@ def get_user_ads(user_id):
         for row in raw_advertisements
     ]
     if data == []:
+        logger.debug('No ads Available')
         return jsonify({
             "success": False,
             "message": "No ads Available"
         }), 404
+    logger.debug(' '.join([str(user_id), ': Ads responded']))
     return jsonify(data)
 
 
@@ -186,12 +194,14 @@ def register():
     email = data.get('email')
     password = data.get('password')
     if (not role or not username or not mobile or not address or not email or not password):
+        logger.debug('error: Missing required fields')
         return jsonify({'error': 'Missing required fields'}), 400
     sql_find_user_exist = """
     select * from {} JOIN baseUser on baseUser.userId = user.userId where email = '{}'
     """
     user_data = db.get_data(sql_find_user_exist.format(role, email))
     if len(user_data) != 0:
+        logger.debug('User Already Exists')
         return jsonify({'error': 'User Aleady Exist'}), 409
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     sql = f"""
@@ -206,6 +216,7 @@ def register():
     if (role == 'user'):
         sql = sql.format('user', last_row_id)
         db.run_query(sql)
+        logger.info(' '.join(['new account created', 'User name:- ', username]))
         return jsonify({
             "success": True,
             "message": "Account Create Success"
@@ -219,6 +230,7 @@ def login():
     email = data.get('email')
     password = data.get('password')
     if (not role or not email or not password):
+        logger.debug('error: Missing required fields')
         return jsonify({'error': 'Missing required fields'}), 400
     sql = """
     SELECT b.password, b.userId, b.username FROM baseUser b 
@@ -232,6 +244,7 @@ def login():
         username = raw_data[0][2]
         is_match_password = bcrypt.check_password_hash(hashed_password, str(password))
         if is_match_password:
+            logger.info(" ".join([username, 'Login Success']))
             return jsonify({
                 "success": True,
                 "message": "Login Success",
@@ -241,6 +254,7 @@ def login():
                 }
             }), 200
         else:
+            logger.info(' '.join([email, 'Login Failed']))
             return jsonify({
                 "success": False,
                 "message": "Login failure"
@@ -254,6 +268,7 @@ def post_ad():
     details_form = request.files['details']
     file = request.files['files']
     if (not vehicle_form or not insurance_form or not details_form):
+        logger.debug('error Missing required fields')
         return jsonify({'error': 'Missing required fields'}), 400
     vehicle_form_content = json.loads(vehicle_form.read())
     insurance_form_content = json.loads(insurance_form.read())
@@ -263,105 +278,116 @@ def post_ad():
     brandId = vehicle_form_content['brand']
     phone = details_form_content['phone']
     district = details_form_content['district']
-    if (vehicle_form_content['type'] == 'car'):
-        withDriver = details_form_content['driver']
-        withAc = details_form_content['ac']
-        noOfPassengers = details_form_content['passengers']
-        vehicle_sql = f"""
-        INSERT INTO vehicle(type,transmissionMethod,withDriver,withAc,noOfPassengers,brandId) VALUES(
-        '{type}','{transmissionMethod}','{withDriver}','{withAc}','{noOfPassengers}','{brandId}'
-        )
-        """
-        db.run_query(vehicle_sql)
-    elif vehicle_form_content['type'] == 'bike':
-        print(details_form_content)
-        engineCapacity = details_form_content['enginecapacity']
-        vehicle_sql = f"""
-                INSERT INTO vehicle(type,transmissionMethod,engineCapacity,brandId) VALUES(
-                '{type}','{transmissionMethod}','{engineCapacity}','{brandId}'
-                )
-                """
-        db.run_query(vehicle_sql)
-    elif vehicle_form_content['type'] == 'lorry':
-        withDriver = details_form_content['driver']
-        maxWeight = details_form_content['weight']
-        vehicle_sql = f"""
-            INSERT INTO vehicle(type,transmissionMethod,withDriver,maxWeight,brandId) VALUES(
-            '{type}','{transmissionMethod}','{withDriver}','{maxWeight}','{brandId}'
-            )
-            """
-        db.run_query(vehicle_sql)
-    elif vehicle_form_content['type'] == 'bus':
-        withDriver = details_form_content['driver']
-        withAc = details_form_content['ac']
-        seats = details_form_content['seats']
-        vehicle_sql = f"""
-            INSERT INTO vehicle(type,transmissionMethod,withDriver,withAc,noOfSeats,brandId) VALUES(
-            '{type}','{transmissionMethod}','{withDriver}','{withAc}','{seats}','{brandId}'
-            )
-            """
-        db.run_query(vehicle_sql)
-    elif vehicle_form_content['type'] == 'van':
-        withDriver = details_form_content['driver']
-        withAc = details_form_content['ac']
-        noOfPassengers = details_form_content['passengers']
-        vehicle_sql = f"""
+    try:
+        db.execute('BEGIN')
+        if (vehicle_form_content['type'] == 'car'):
+            withDriver = details_form_content['driver']
+            withAc = details_form_content['ac']
+            noOfPassengers = details_form_content['passengers']
+            vehicle_sql = f"""
             INSERT INTO vehicle(type,transmissionMethod,withDriver,withAc,noOfPassengers,brandId) VALUES(
             '{type}','{transmissionMethod}','{withDriver}','{withAc}','{noOfPassengers}','{brandId}'
             )
             """
-        db.run_query(vehicle_sql)
-    else:
+            db.execute(vehicle_sql)
+        elif vehicle_form_content['type'] == 'bike':
+            print(details_form_content)
+            engineCapacity = details_form_content['enginecapacity']
+            vehicle_sql = f"""
+                    INSERT INTO vehicle(type,transmissionMethod,engineCapacity,brandId) VALUES(
+                    '{type}','{transmissionMethod}','{engineCapacity}','{brandId}'
+                    )
+                    """
+            db.execute(vehicle_sql)
+        elif vehicle_form_content['type'] == 'lorry':
+            withDriver = details_form_content['driver']
+            maxWeight = details_form_content['weight']
+            vehicle_sql = f"""
+                INSERT INTO vehicle(type,transmissionMethod,withDriver,maxWeight,brandId) VALUES(
+                '{type}','{transmissionMethod}','{withDriver}','{maxWeight}','{brandId}'
+                )
+                """
+            db.execute(vehicle_sql)
+        elif vehicle_form_content['type'] == 'bus':
+            withDriver = details_form_content['driver']
+            withAc = details_form_content['ac']
+            seats = details_form_content['seats']
+            vehicle_sql = f"""
+                INSERT INTO vehicle(type,transmissionMethod,withDriver,withAc,noOfSeats,brandId) VALUES(
+                '{type}','{transmissionMethod}','{withDriver}','{withAc}','{seats}','{brandId}'
+                )
+                """
+            db.execute(vehicle_sql)
+        elif vehicle_form_content['type'] == 'van':
+            withDriver = details_form_content['driver']
+            withAc = details_form_content['ac']
+            noOfPassengers = details_form_content['passengers']
+            vehicle_sql = f"""
+                INSERT INTO vehicle(type,transmissionMethod,withDriver,withAc,noOfPassengers,brandId) VALUES(
+                '{type}','{transmissionMethod}','{withDriver}','{withAc}','{noOfPassengers}','{brandId}'
+                )
+                """
+            db.execute(vehicle_sql)
+        else:
+            logger.debug(' '.join([vehicle_form_content['type'], ': Not Valid vehicle type']))
+            return jsonify({
+                "success": False,
+                "message": "Not Valid Vehicle Type"
+            }), 404
+
+        vehicleId = db.get_last_row_id()
+        title = details_form_content['title']
+        rate = details_form_content['rate']
+        duration = details_form_content['duration']
+        description = details_form_content['description']
+        userId = details_form_content['userId']
+        sql = f"""
+        INSERT INTO advertisement(title,rate,rateDuration,description,userId,vehicleId,mainImage,phone,districtId) VALUES(
+        '{title}','{rate}','{duration}','{description}','{userId}','{vehicleId}','image0.jpg','{phone}','{district}')    
+        """
+        db.execute(sql)
+        insuranceType = insurance_form_content['insuranceType']
+        collisonCoverage = insurance_form_content['collisonCoverage']
+        bodyCoverage = insurance_form_content['bodyCoverage']
+        medicalCoverage = insurance_form_content['medicalCoverage']
+        insurance_sql = f"""
+        INSERT INTO insurance(insuranceType,collisonCoverage,bodyCoverage,medicalCoverage,vehicleId) VALUES(
+        '{insuranceType}','{collisonCoverage}','{bodyCoverage}','{medicalCoverage}','{vehicleId}'
+        )
+        """
+        db.execute(insurance_sql)
+
+        temp_dir = os.path.join(os.getcwd(), app.config['AD_IMAGES'], str(vehicleId))
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+        # with ZipFile(file, 'r') as zip_ref:
+        #     zip_ref.extractall(temp_dir)
+        with ZipFile(file, 'r') as zip_ref:
+            for name in zip_ref.namelist():
+                if name.endswith('.jpg') or name.endswith('.png'):
+                    # Open the image file with Pillow
+                    with zip_ref.open(name) as image_file:
+                        image_bytes = io.BytesIO(image_file.read())
+                        image = Image.open(image_bytes)
+
+                        # Resize the image to a default size
+                        default_size = (750, 600)
+                        image.thumbnail(default_size)
+
+                        # Save the resized image to a new file
+                        filename = os.path.join(temp_dir, name)
+                        image.save(filename)
+        logger.info(' '.join(['vehicle id:-', str(vehicleId), 'Post-ad Success']))
+        return jsonify({
+            "success": True,
+            "message": "Post-ad Success"
+        }), 200
+    except:
+        db.rollback()
         return jsonify({
             "success": False,
-            "message": "Not Valid Vehicle Type"
-        }), 404
-
-    vehicleId = db.get_last_row_id()
-    title = details_form_content['title']
-    rate = details_form_content['rate']
-    duration = details_form_content['duration']
-    description = details_form_content['description']
-    userId = details_form_content['userId']
-    sql = f"""
-    INSERT INTO advertisement(title,rate,rateDuration,description,userId,vehicleId,mainImage,phone,district) VALUES(
-    '{title}','{rate}','{duration}','{description}','{userId}','{vehicleId}','image0.jpg','{phone}','{district}')    
-    """
-    db.run_query(sql)
-    insuranceType = insurance_form_content['insuranceType']
-    collisonCoverage = insurance_form_content['collisonCoverage']
-    bodyCoverage = insurance_form_content['bodyCoverage']
-    medicalCoverage = insurance_form_content['medicalCoverage']
-    insurance_sql = f"""
-    INSERT INTO insurance(insuranceType,collisonCoverage,bodyCoverage,medicalCoverage,vehicleId) VALUES(
-    '{insuranceType}','{collisonCoverage}','{bodyCoverage}','{medicalCoverage}','{vehicleId}'
-    )
-    """
-    db.run_query(insurance_sql)
-    temp_dir = os.path.join(os.getcwd(), app.config['AD_IMAGES'], str(vehicleId))
-    if not os.path.exists(temp_dir):
-        os.makedirs(temp_dir)
-    # with ZipFile(file, 'r') as zip_ref:
-    #     zip_ref.extractall(temp_dir)
-    with ZipFile(file, 'r') as zip_ref:
-        for name in zip_ref.namelist():
-            if name.endswith('.jpg') or name.endswith('.png'):
-                # Open the image file with Pillow
-                with zip_ref.open(name) as image_file:
-                    image_bytes = io.BytesIO(image_file.read())
-                    image = Image.open(image_bytes)
-
-                    # Resize the image to a default size
-                    default_size = (750, 600)
-                    image.thumbnail(default_size)
-
-                    # Save the resized image to a new file
-                    filename = os.path.join(temp_dir, name)
-                    image.save(filename)
-    return jsonify({
-        "success": True,
-        "message": "Post-ad Success"
-    }), 200
+            "message": "Post-ad Unsuccessful"
+        }), 200
 
 
 @app.route('/api/get/ad-details/<int:ad_id>')
@@ -369,17 +395,19 @@ def get_adverisement_details(ad_id):
     sql = f"""
     SELECT ad.status,ad.title,ad.rate,ad.rateDuration,ad.createdAt,ad.description,ad.userId,ad.vehicleId,ad.phone, districts.district 
     FROM advertisement ad
-    JOIN districts ON ad.district = districts.districtId  
+    JOIN districts ON ad.districtId = districts.districtId  
     WHERE ad.advertiseId='{ad_id}'
     """
     try:
         raw_data = db.get_data(sql)[0]
     except IndexError:
+        logger.debug(' '.join([ad_id, ':- Advertisement not available']))
         return jsonify({
             "success": False,
             "message": "Advertisement not available"
         }), 404
     if raw_data[0] != 1:
+        logger.debug(' '.join([ad_id, ':- Advertise Inactive']))
         return jsonify({
             "success": False,
             "message": "Advertise Inactive"
@@ -394,6 +422,7 @@ def get_adverisement_details(ad_id):
             'SERVER_PORT')]), app.config['AD_IMAGES'], str(ad_id), os.path.basename(file)]) for file in image_files]
 
     else:
+        logger.debug('Advertise Images Path Not Available')
         return jsonify({
             "success": False,
             "message": "Advertise Images Path Not available"
@@ -418,12 +447,27 @@ def get_adverisement_details(ad_id):
 @app.route('/api/get/search')
 def get_search_results():
     query = request.args.get('search')
-    search_sql = f"""
-    SELECT advertiseId,title,rate,rateDuration,mainImage,userId from advertisement 
-    WHERE title LIKE '%{query}%'
-    OR description LIKE '%{query}%'
-    ORDER BY createdAt DESC;
-    """
+    district = request.args.get('district')
+    if query is not None and district is not None:
+        search_sql = f"""
+            SELECT a.advertiseId,a.title,a.rate,a.rateDuration,a.mainImage,a.userId from advertisement a
+            JOIN districts d ON  a.districtId = d.districtId
+            JOIN vehicle v ON a.vehicleId = v.vehicleId
+            WHERE (a.title LIKE '%{query}%'
+            OR a.description LIKE '%{query}%' 
+            OR v.type LIKE '%{query}%') 
+            AND d.district = '{district}'
+            ORDER BY a.createdAt DESC;
+            """
+    else:
+        search_sql = f"""
+        SELECT advertiseId,title,rate,rateDuration,mainImage,userId from advertisement a 
+        JOIN vehicle v ON a.vehicleId = v.vehicleId 
+        WHERE title LIKE '%{query}%'
+        OR description LIKE '%{query}%' 
+        OR v.type LIKE '%{query}%'
+        ORDER BY createdAt DESC;
+        """
     raw_advertisements = db.get_data(search_sql)
     sql_user = """
         SELECT b.username FROM baseUser b 
