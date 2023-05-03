@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { AdvertisementCardInterface } from './interfaces/advertisement-card.interface';
 import { ProfileHttpInterface } from './interfaces/profile-http.interface';
-import { FetchProfileService } from './services/fetch-profile.service';
 import { FetchUserAdService } from './services/fetch-user-ad.service';
+import { AdcardSectionRefreshService } from '../shared/services/adcard-section-refresh.service';
 
 @Component({
   selector: 'app-profile',
@@ -13,9 +13,9 @@ import { FetchUserAdService } from './services/fetch-user-ad.service';
 })
 export class ProfileComponent {
   //@ts-ignore
-  private profileHttpSubscription: Subscription;
-  //@ts-ignore
   private userAdsHttpSubscription: Subscription;
+  //@ts-ignore
+  private adcardRefreshSubscription: Subscription;
 
   id: number = 0;
   profileDetails: ProfileHttpInterface = {
@@ -29,9 +29,8 @@ export class ProfileComponent {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private fetchProfile: FetchProfileService,
-    private fetchUserAds: FetchUserAdService,
-    private route: Router
+    private fetchUserAdsService: FetchUserAdService,
+    private adcardRefreshEvent: AdcardSectionRefreshService
   ) {}
 
   ngOnInit() {
@@ -39,19 +38,15 @@ export class ProfileComponent {
       this.id = param['id'];
     });
 
-    this.profileHttpSubscription = this.fetchProfile
-      .getUserProfile(this.id)
-      .subscribe({
-        next: (data) => {
-          this.profileDetails = data;
-        },
-        error: (err) => {
-          this.route.navigate(['notfound']);
-        },
-        complete: () => {},
-      });
+    this.adcardRefreshEvent.refreshEvent.subscribe(() => {
+      this.fetchUserAds();
+    });
 
-    this.userAdsHttpSubscription = this.fetchUserAds
+    this.fetchUserAds();
+  }
+
+  fetchUserAds() {
+    this.userAdsHttpSubscription = this.fetchUserAdsService
       .fetchUserAds(this.id)
       .subscribe({
         next: (response) => {
@@ -63,12 +58,12 @@ export class ProfileComponent {
   }
 
   ngOnDestroy() {
-    if (this.profileHttpSubscription) {
-      this.profileHttpSubscription.unsubscribe();
-    }
-
     if (this.userAdsHttpSubscription) {
       this.userAdsHttpSubscription.unsubscribe();
+    }
+
+    if (this.adcardRefreshSubscription) {
+      this.adcardRefreshSubscription.unsubscribe();
     }
   }
 }

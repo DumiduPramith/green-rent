@@ -7,4 +7,5 @@ export interface AdvertisementCardInterface {
   rate: number;
   duration: string;
   ad_id: number;
+  status: number;
 }

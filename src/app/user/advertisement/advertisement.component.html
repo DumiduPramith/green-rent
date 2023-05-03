@@ -4,5 +4,7 @@
     <app-ad-details class="col-6" [adDetails]="adDetails"></app-ad-details>
   </div>
   <p class="h1 fw-bold cust-margin">Advertiser Profile</p>
-  <app-user-details></app-user-details>
+  <ng-container *ngIf="adDetails.adId != 0">
+    <app-user-details [userId]="adDetails.userId"></app-user-details>
+  </ng-container>
 </div>
